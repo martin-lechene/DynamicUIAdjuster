@@ -1,104 +1,30 @@
 {
   "youtube.com": {
-    "selectors": {
-      "sidebar": ".ytd-app #sections",
-      "comments": "#comments",
-      "searchBar": "#search-input input",
-      "subscriptionButton": "#subscribe-button",
-      "videoElement": "video",
-      "relatedVideos": ".ytd-watch-next-secondary-results-renderer",
-      "notifications": ".style-scope ytd-notification-topics-chip",
-      "recommendedContent": "#related",
-      "banners": ".ad-container"
+    "sidebar": {
+      "action": "show",
+      "threshold": 5
     },
-    "actions": {
-      "sidebar": {
-        "threshold": 5,
-        "action": "display"
-      },
-      "comments": {
-        "threshold": 0,
-        "action": "hide"
-      },
-      "searchBar": {
-        "threshold": 3,
-        "action": "display"
-      },
-      "subscriptionButton": {
-        "threshold": 1,
-        "action": "scale"
-      },
-      "videoElement": {
-        "threshold": 3,
-        "action": "fullscreen"
-      },
-      "relatedVideos": {
-        "threshold": 3,
-        "action": "display"
-      },
-      "notifications": {
-        "threshold": 0,
-        "action": "hide"
-      },
-      "recommendedContent": {
-        "threshold": 0,
-        "action": "hide"
-      },
-      "banners": {
-        "threshold": 0,
-        "action": "hide"
-      }
+    "comments": {
+      "action": "hide",
+      "threshold": 0
+    },
+    "searchBar": {
+      "action": "show",
+      "threshold": 3
+    },
+    "subscriptionButton": {
+      "action": "highlight",
+      "threshold": 1
     }
   },
   "example.com": {
-    "selectors": {
-      "sidebar": ".main-sidebar",
-      "comments": ".comment-section",
-      "searchBar": ".site-search input",
-      "subscriptionButton": ".subscribe-btn",
-      "videoElement": ".video-player",
-      "relatedVideos": ".related-videos",
-      "notifications": ".notif-bell",
-      "recommendedContent": ".recommended-content",
-      "banners": ".ad-banner"
+    "sidebar": {
+      "action": "show",
+      "threshold": 3
     },
-    "actions": {
-      "sidebar": {
-        "threshold": 3,
-        "action": "display"
-      },
-      "comments": {
-        "threshold": 0,
-        "action": "hide"
-      },
-      "searchBar": {
-        "threshold": 2,
-        "action": "display"
-      },
-      "subscriptionButton": {
-        "threshold": 0,
-        "action": "scale"
-      },
-      "videoElement": {
-        "threshold": 3,
-        "action": "fullscreen"
-      },
-      "relatedVideos": {
-        "threshold": 2,
-        "action": "display"
-      },
-      "notifications": {
-        "threshold": 0,
-        "action": "hide"
-      },
-      "recommendedContent": {
-        "threshold": 0,
-        "action": "hide"
-      },
-      "banners": {
-        "threshold": 0,
-        "action": "hide"
-      }
+    "comments": {
+      "action": "hide",
+      "threshold": 0
     }
   }
 }
