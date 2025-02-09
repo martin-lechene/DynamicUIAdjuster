@@ -25,6 +25,34 @@
       }
     }
   },
+  {
+  "example.com": {
+    "selectors": {
+      "sidebar": "#sidebar",
+      "comments": ".comments",
+      "search": "#search",
+      "like": "#like"
+    },
+    "actions": {
+      "sidebar": {
+        "action": "scale",
+        "threshold": 5
+      },
+      "comments": {
+        "action": "hide",
+        "threshold": 0
+      },
+      "search": {
+        "action": "scale",
+        "threshold": 3
+      },
+      "like": {
+        "action": "opacity",
+        "threshold": 2
+      }
+    }
+  }
+},
   "vetzy.com": {
     "selectors": {
       "veterinarian_info": ".vet-info",
