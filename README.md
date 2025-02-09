@@ -1,8 +1,4 @@
-Here’s the updated README with the adjusted contributing, license, and contact information:
-
----
-
-# **Dynamic UI Modifier**  
+# **Dynamic UI Adjuster**  
 ### A Chrome Extension to Personalize Your Browsing Experience 🎨🔧
 
 ---
@@ -159,7 +155,3 @@ For any inquiries or support, reach us via email at [contact@doganddev.eu](mailt
 ---
 
 ### **Enjoy a personalized web browsing experience like never before with Dynamic UI Modifier!** 🌟🚀
-
----
-
-This version ensures that the **commercial use restriction** is clear, provides better structure, and keeps the contact email and contributing guidelines in a concise and straightforward manner.
