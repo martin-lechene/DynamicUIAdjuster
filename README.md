@@ -1,4 +1,4 @@
-# Site Customizer
+# WebHabit
 
 Une extension Chrome qui adapte l'interface des sites en fonction de vos habitudes de navigation.
 
