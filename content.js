@@ -1,5 +1,51 @@
+// Fonction pour détecter les éléments communs sur un site
+const detectSiteSelectors = () => {
+  const selectors = {};
+
+  // Recherche d'une sidebar (commune sur beaucoup de sites)
+  const sidebar = document.querySelector('aside, .sidebar, #sidebar, .main-sidebar');
+  if (sidebar) selectors.sidebar = sidebar;
+
+  // Recherche de la section des commentaires (souvent marquée par des classes comme "comments" ou "comment-section")
+  const comments = document.querySelector('.comments, .comment-section, #comments');
+  if (comments) selectors.comments = comments;
+
+  // Recherche de la barre de recherche
+  const searchBar = document.querySelector('input[type="search"], #search-input, .search-bar input');
+  if (searchBar) selectors.searchBar = searchBar;
+
+  // Recherche d'un bouton d'abonnement
+  const subscriptionButton = document.querySelector('.subscribe-button, #subscribe-button, .subscribe-btn');
+  if (subscriptionButton) selectors.subscriptionButton = subscriptionButton;
+
+  // Recherche du lecteur vidéo
+  const videoElement = document.querySelector('video, .video-player');
+  if (videoElement) selectors.videoElement = videoElement;
+
+  // Recherche des vidéos recommandées ou liées
+  const relatedVideos = document.querySelector('.related-videos, #related-videos, .ytd-watch-next-secondary-results-renderer');
+  if (relatedVideos) selectors.relatedVideos = relatedVideos;
+
+  // Recherche des notifications (ex. en forme de cloche)
+  const notifications = document.querySelector('.notif-bell, .notification, #notif-bell');
+  if (notifications) selectors.notifications = notifications;
+
+  // Recherche des contenus recommandés
+  const recommendedContent = document.querySelector('.recommended-content, .recommendations, #recommended');
+  if (recommendedContent) selectors.recommendedContent = recommendedContent;
+
+  // Recherche des bannières publicitaires
+  const banners = document.querySelector('.ad-banner, .ad-container, .advertisement');
+  if (banners) selectors.banners = banners;
+
+  return selectors;
+};
+
 // Récupère l'URL actuelle du site
 const currentSite = window.location.hostname;
+
+// Détecte dynamiquement les sélecteurs du site actuel
+const selectors = detectSiteSelectors();
 
 // Vérifie si les données existent déjà dans le stockage local, sinon initialise
 let userActions = JSON.parse(localStorage.getItem('userActions')) || {};
@@ -16,7 +62,6 @@ if (!userActions[currentSite]) {
     notifications: 0,
     recommendedContent: 0,
     banners: 0,
-    // Ajoutez d'autres éléments ici à suivre
   };
 }
 
@@ -30,146 +75,70 @@ const incrementActionScore = (action) => {
 
 // Fonction pour analyser le comportement de l'utilisateur sur la page
 const analyzeUserBehavior = () => {
-  // Exemple : Suivre les clics sur la sidebar
-  const sidebar = document.querySelector('.sidebar');
-  if (sidebar) {
-    sidebar.addEventListener('click', () => {
-      incrementActionScore('sidebar');
-    });
-  }
-
-  // Suivre si l'utilisateur regarde les commentaires
-  const commentsSection = document.querySelector('.comments-section');
-  if (commentsSection) {
-    commentsSection.addEventListener('mouseover', () => {
-      incrementActionScore('comments');
-    });
-  }
-
-  // Suivre l'utilisation de la barre de recherche
-  const searchBar = document.querySelector('.search-bar');
-  if (searchBar) {
-    searchBar.addEventListener('focus', () => {
-      incrementActionScore('search');
-    });
-  }
-
-  // Suivre les clics sur le bouton d'abonnement
-  const subscribeButton = document.querySelector('.subscribe-button');
-  if (subscribeButton) {
-    subscribeButton.addEventListener('click', () => {
-      incrementActionScore('subscriptionButton');
-    });
-  }
-
-  // Suivre l'activation du grand écran pour la vidéo
-  const videoElement = document.querySelector('video');
-  if (videoElement) {
-    videoElement.addEventListener('fullscreenchange', () => {
-      if (document.fullscreenElement) {
-        incrementActionScore('videoFullScreen');
-      }
-    });
-  }
-
-  // Suivre les vidéos liées (sidebar des vidéos recommandées)
-  const relatedVideos = document.querySelector('.related-videos');
-  if (relatedVideos) {
-    relatedVideos.addEventListener('mouseover', () => {
-      incrementActionScore('relatedVideos');
-    });
-  }
-
-  // Suivre les notifications (ex. sur YouTube, Facebook)
-  const notifications = document.querySelector('.notifications');
-  if (notifications) {
-    notifications.addEventListener('click', () => {
-      incrementActionScore('notifications');
-    });
-  }
-
-  // Suivre le contenu recommandé
-  const recommendedContent = document.querySelector('.recommended-content');
-  if (recommendedContent) {
-    recommendedContent.addEventListener('mouseover', () => {
-      incrementActionScore('recommendedContent');
-    });
-  }
-
-  // Suivre les bannières publicitaires
-  const banners = document.querySelector('.ads');
-  if (banners) {
-    banners.addEventListener('mouseover', () => {
-      incrementActionScore('banners');
-    });
-  }
+  // Analyse des clics ou interactions sur les éléments détectés
+  Object.keys(selectors).forEach(selectorKey => {
+    const element = selectors[selectorKey];
+    if (element) {
+      element.addEventListener('click', () => incrementActionScore(selectorKey));
+      element.addEventListener('mouseover', () => incrementActionScore(selectorKey));
+    }
+  });
 };
 
 // Fonction pour appliquer les modifications UI en fonction des scores
 const adjustUIBasedOnBehavior = () => {
-  // Si la sidebar est fréquemment utilisée, laissez-la ouverte
-  if (userActions[currentSite].sidebar > 5) {  // seuil arbitraire
-    document.querySelector('.sidebar').style.display = 'block';
-  } else {
-    document.querySelector('.sidebar').style.display = 'none';
-  }
-
-  // Si les commentaires ne sont jamais utilisés, cachez la section
-  if (userActions[currentSite].comments === 0) {
-    document.querySelector('.comments-section').style.display = 'none';
-  } else {
-    document.querySelector('.comments-section').style.display = 'block';
-  }
-
-  // Si la barre de recherche est fréquemment utilisée, affichez-la
-  if (userActions[currentSite].search > 3) {  // seuil arbitraire
-    document.querySelector('.search-bar').style.display = 'block';
-  }
-
-  // Si l'utilisateur clique rarement sur le bouton d'abonnement, réduisez sa taille
-  if (userActions[currentSite].subscriptionButton === 0) {
-    document.querySelector('.subscribe-button').style.transform = 'scale(0.5)';
-  } else {
-    document.querySelector('.subscribe-button').style.transform = 'scale(1)';
-  }
-
-  // Si la vidéo est souvent en grand écran, forcez le mode plein écran
-  if (userActions[currentSite].videoFullScreen > 3) {  // seuil arbitraire
-    const videoElement = document.querySelector('video');
-    if (videoElement && !document.fullscreenElement) {
-      videoElement.requestFullscreen();
+  // Règles génériques d'affichage à partir des scores
+  const applyVisibility = (selector, action, threshold = 3, hide = false) => {
+    const element = selector;
+    if (element) {
+      if (userActions[currentSite][action] > threshold) {
+        element.style.display = hide ? 'none' : 'block';
+      } else {
+        element.style.display = hide ? 'block' : 'none';
+      }
     }
-  }
+  };
 
-  // Si les vidéos liées sont fréquemment consultées, laissez la sidebar des vidéos liées ouverte
-  if (userActions[currentSite].relatedVideos > 3) {  // seuil arbitraire
-    document.querySelector('.related-videos').style.display = 'block';
-  } else {
-    document.querySelector('.related-videos').style.display = 'none';
-  }
-
-  // Si les notifications ne sont jamais cliquées, cachez-les
-  if (userActions[currentSite].notifications === 0) {
-    document.querySelector('.notifications').style.display = 'none';
-  } else {
-    document.querySelector('.notifications').style.display = 'block';
-  }
-
-  // Si le contenu recommandé est rarement consulté, cachez-le
-  if (userActions[currentSite].recommendedContent === 0) {
-    document.querySelector('.recommended-content').style.display = 'none';
-  } else {
-    document.querySelector('.recommended-content').style.display = 'block';
-  }
-
-  // Si les bannières publicitaires sont rarement consultées, réduisez leur taille ou cachez-les
-  if (userActions[currentSite].banners === 0) {
-    document.querySelector('.ads').style.display = 'none';
-  } else {
-    document.querySelector('.ads').style.transform = 'scale(0.5)';
-  }
-
-  // Autres ajustements spécifiques à vos besoins peuvent être ajoutés ici
+  // Applique les ajustements d'UI basés sur les actions de l'utilisateur
+  Object.keys(selectors).forEach(selectorKey => {
+    const element = selectors[selectorKey];
+    if (element) {
+      switch (selectorKey) {
+        case 'sidebar':
+          applyVisibility(element, 'sidebar', 5);
+          break;
+        case 'comments':
+          applyVisibility(element, 'comments', 0, true);
+          break;
+        case 'searchBar':
+          applyVisibility(element, 'search', 3);
+          break;
+        case 'subscriptionButton':
+          const subscribeButton = element;
+          subscribeButton.style.transform = userActions[currentSite].subscriptionButton === 0 ? 'scale(0.5)' : 'scale(1)';
+          break;
+        case 'videoElement':
+          if (userActions[currentSite].videoFullScreen > 3 && !document.fullscreenElement) {
+            element.requestFullscreen();
+          }
+          break;
+        case 'relatedVideos':
+          applyVisibility(element, 'relatedVideos', 3);
+          break;
+        case 'notifications':
+          applyVisibility(element, 'notifications', 0, true);
+          break;
+        case 'recommendedContent':
+          applyVisibility(element, 'recommendedContent', 0, true);
+          break;
+        case 'banners':
+          applyVisibility(element, 'banners', 0, true);
+          break;
+        default:
+          break;
+      }
+    }
+  });
 };
 
 // Lancer l'analyse et l'ajustement de l'UI
