@@ -1,0 +1,12 @@
+{
+  "name": "doganddev/dynamic-ui-adjuster-chrome-ext",
+  "description": "A extension chrome for create the dynamic interface by usage or more context",
+  "type": "library",
+  "autoload": {
+    "psr-4": {
+      "DogAndDev\\DynamicUIAdjuster\\": "/"
+    }
+  },
+  "minimum-stability": "dev",
+  "prefer-stable": true
+}
