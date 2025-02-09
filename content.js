@@ -1,85 +1,131 @@
-// Charger le fichier settings.json ou l'utiliser via chrome.storage
-const loadSettings = async () => {
-  try {
-    const response = await fetch(chrome.runtime.getURL('settings.json'));
-    return await response.json();
-  } catch (error) {
-    console.error('Error loading settings:', error);
-    return {}; // Retourner un objet vide si le fichier échoue à se charger
-  }
+// Fonction pour activer le mode de sélection d'un élément
+let selectedElement = null;
+
+const activateSelectionMode = () => {
+  // Ajouter un écouteur de clic sur toute la page pour la sélection d'éléments
+  document.body.addEventListener('click', handleElementSelection);
+  document.body.style.cursor = 'pointer';
+  alert('Cliquez sur un élément pour le sélectionner.');
 };
 
-// Vérifie l'URL du site actuel
-const currentSite = window.location.hostname;
-
-// Vérifie si l'objet settings.json contient les configurations pour ce site
-const applySiteSettings = (settings) => {
-  const siteConfig = settings[currentSite];
-  if (!siteConfig) return;
-
-  const { selectors, actions } = siteConfig;
-
-  // Si les sélecteurs existent pour ce site, on les récupère
-  const userActions = JSON.parse(localStorage.getItem('userActions')) || {};
-  if (!userActions[currentSite]) {
-    userActions[currentSite] = {};
-    Object.keys(selectors).forEach(selector => {
-      userActions[currentSite][selector] = 0; // Initialiser les actions
-    });
-    localStorage.setItem('userActions', JSON.stringify(userActions));
+// Fonction de gestion de la sélection de l'élément
+const handleElementSelection = (event) => {
+  // Vérifier que l'élément cliqué n'est pas un élément déjà sélectionné
+  if (selectedElement !== event.target) {
+    if (selectedElement) {
+      selectedElement.style.border = ''; // Retirer la surbrillance de l'ancien élément
+    }
+    selectedElement = event.target;
+    selectedElement.style.border = '2px solid red'; // Surbrillance de l'élément sélectionné
   }
+  event.stopPropagation();
+  event.preventDefault();
+  
+  // Afficher le menu d'actions
+  showActionMenu(event.clientX, event.clientY);
+};
 
-  // Fonction pour incrémenter le score d'une action spécifique
-  const incrementActionScore = (action) => {
-    if (userActions[currentSite]) {
-      userActions[currentSite][action] += 1;
-      localStorage.setItem('userActions', JSON.stringify(userActions));
-    }
-  };
-
-  // Fonction pour appliquer l'action définie dans le fichier settings.json
-  const applyAction = (selectorKey, element) => {
-    const actionConfig = actions[selectorKey];
-    const score = userActions[currentSite][selectorKey] || 0;
-    
-    // Action à appliquer en fonction du score et du seuil
-    if (score >= actionConfig.threshold) {
-      switch (actionConfig.action) {
-        case 'display':
-          element.style.display = 'block';
-          break;
-        case 'hide':
-          element.style.display = 'none';
-          break;
-        case 'scale':
-          element.style.transform = 'scale(1.5)';
-          break;
-        case 'fullscreen':
-          if (!document.fullscreenElement) {
-            element.requestFullscreen();
-          }
-          break;
-        default:
-          break;
-      }
-    }
-  };
-
-  // Analyser le comportement utilisateur et appliquer les actions
-  Object.keys(selectors).forEach(selectorKey => {
-    const element = document.querySelector(selectors[selectorKey]);
-    if (element) {
-      // Suivi des clics et interactions
-      element.addEventListener('click', () => incrementActionScore(selectorKey));
-      element.addEventListener('mouseover', () => incrementActionScore(selectorKey));
-
-      // Appliquer les actions
-      applyAction(selectorKey, element);
-    }
+// Fonction pour afficher le menu d'actions
+const showActionMenu = (x, y) => {
+  const actionMenu = document.createElement('div');
+  actionMenu.style.position = 'absolute';
+  actionMenu.style.left = `${x}px`;
+  actionMenu.style.top = `${y}px`;
+  actionMenu.style.backgroundColor = '#fff';
+  actionMenu.style.border = '1px solid #ccc';
+  actionMenu.style.padding = '10px';
+  actionMenu.style.boxShadow = '0 4px 8px rgba(0, 0, 0, 0.1)';
+  
+  // Liste des actions disponibles
+  const actions = ['hide', 'scale', 'rotate', 'color', 'fullscreen', 'opacity'];
+  actions.forEach(action => {
+    const actionButton = document.createElement('button');
+    actionButton.textContent = `Appliquer: ${action}`;
+    actionButton.onclick = () => previewAction(action);
+    actionMenu.appendChild(actionButton);
   });
+
+  // Ajouter une option pour sauvegarder l'action
+  const saveButton = document.createElement('button');
+  saveButton.textContent = 'Sauvegarder l\'action';
+  saveButton.onclick = saveAction;
+  actionMenu.appendChild(saveButton);
+
+  // Ajouter le menu d'action à la page
+  document.body.appendChild(actionMenu);
 };
 
-// Exécuter l'application des paramètres dès le chargement du script
-loadSettings().then(settings => {
-  applySiteSettings(settings);
+// Fonction pour prévisualiser l'action sur l'élément sélectionné
+const previewAction = (action) => {
+  if (!selectedElement) return;
+
+  switch (action) {
+    case 'hide':
+      selectedElement.style.display = 'none';
+      break;
+    case 'scale':
+      selectedElement.style.transform = 'scale(1.5)';
+      break;
+    case 'rotate':
+      selectedElement.style.transform = 'rotate(15deg)';
+      break;
+    case 'color':
+      selectedElement.style.color = 'red';
+      break;
+    case 'fullscreen':
+      if (!document.fullscreenElement) {
+        selectedElement.requestFullscreen();
+      }
+      break;
+    case 'opacity':
+      selectedElement.style.opacity = 0.5;
+      break;
+    default:
+      break;
+  }
+};
+
+// Fonction pour sauvegarder l'action sélectionnée dans le fichier settings.json
+const saveAction = async () => {
+  const action = prompt('Entrez l\'action à appliquer (hide, scale, rotate, color, fullscreen, opacity):');
+  if (!action || !['hide', 'scale', 'rotate', 'color', 'fullscreen', 'opacity'].includes(action)) {
+    alert('Action invalide');
+    return;
+  }
+  
+  const siteConfig = await loadSettings();
+  const currentSite = window.location.hostname;
+  
+  if (!siteConfig[currentSite]) {
+    siteConfig[currentSite] = { selectors: {}, actions: {} };
+  }
+
+  const selectorKey = prompt('Entrez une clé pour cet élément (par exemple, "sidebar", "comments"):');
+  
+  // Ajouter l'action à l'élément sélectionné
+  siteConfig[currentSite].actions[selectorKey] = {
+    threshold: 0, // Initialiser le seuil par défaut
+    action: action
+  };
+
+  // Sauvegarder dans settings.json (localStorage ici pour la démo, dans un cas réel utiliser une API de stockage Chrome)
+  await saveSettings(siteConfig);
+  alert('Action sauvegardée!');
+  selectedElement.style.border = ''; // Enlever la surbrillance de l'élément
+};
+
+// Fonction pour charger les paramètres du fichier settings.json (ici stocké localement)
+const loadSettings = async () => {
+  const settings = localStorage.getItem('settings');
+  return settings ? JSON.parse(settings) : {};
+};
+
+// Fonction pour sauvegarder les paramètres dans le fichier settings.json
+const saveSettings = async (settings) => {
+  localStorage.setItem('settings', JSON.stringify(settings));
+};
+
+// Démarrer le mode de sélection d'élément lorsqu'on clique sur un bouton ou une action
+document.getElementById('start-selection').addEventListener('click', () => {
+  activateSelectionMode();
 });
