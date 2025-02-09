@@ -1,27 +1,25 @@
 {
   "manifest_version": 3,
-  "name": "Dynamic UI Adjuster",
-  "description": "Adapt the UI of websites based on usage patterns.",
+  "name": "Dynamic UI Modifier",
   "version": "1.0",
   "permissions": [
-    "storage",
-    "activeTab"
+    "activeTab",
+    "downloads"
   ],
   "background": {
     "service_worker": "background.js"
   },
   "action": {
-    "default_popup": "popup/popup.html",
-    "default_icon": {
-      "16": "assets/icons/icon-16.png",
-      "48": "assets/icons/icon-48.png",
-      "128": "assets/icons/icon-128.png"
-    }
+    "default_popup": "example.html"
   },
   "content_scripts": [
     {
       "matches": ["<all_urls>"],
       "js": ["content.js"]
     }
+  ],
+  "host_permissions": [
+    "http://*/*",
+    "https://*/*"
   ]
 }
