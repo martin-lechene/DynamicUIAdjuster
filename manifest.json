@@ -1,11 +1,22 @@
 {
   "manifest_version": 3,
-  "name": "Site Customizer",
-  "description": "Adapte l'interface des sites en fonction de vos habitudes.",
+  "name": "Dynamic UI Adjuster",
+  "description": "Adapt the UI of websites based on usage patterns.",
   "version": "1.0",
-  "permissions": ["storage", "activeTab"],
+  "permissions": [
+    "storage",
+    "activeTab"
+  ],
   "background": {
     "service_worker": "background.js"
+  },
+  "action": {
+    "default_popup": "popup/popup.html",
+    "default_icon": {
+      "16": "assets/icons/icon-16.png",
+      "48": "assets/icons/icon-48.png",
+      "128": "assets/icons/icon-128.png"
+    }
   },
   "content_scripts": [
     {
