@@ -1,30 +1,49 @@
 {
   "youtube.com": {
-    "sidebar": {
-      "action": "show",
-      "threshold": 5
+    "selectors": {
+      "sidebar": "#related",
+      "comments": "#comments",
+      "subscription_button": "#subscribe-button",
+      "video_player": "#movie_player"
     },
-    "comments": {
-      "action": "hide",
-      "threshold": 0
-    },
-    "searchBar": {
-      "action": "show",
-      "threshold": 3
-    },
-    "subscriptionButton": {
-      "action": "highlight",
-      "threshold": 1
+    "actions": {
+      "sidebar": {
+        "threshold": 0.8,
+        "action": "hide"
+      },
+      "comments": {
+        "threshold": 0,
+        "action": "hide"
+      },
+      "subscription_button": {
+        "threshold": 0.5,
+        "action": "reduce"
+      },
+      "video_player": {
+        "threshold": 1,
+        "action": "fullscreen"
+      }
     }
   },
-  "example.com": {
-    "sidebar": {
-      "action": "show",
-      "threshold": 3
+  "vetzy.com": {
+    "selectors": {
+      "veterinarian_info": ".vet-info",
+      "appointment_button": "#appointment-button",
+      "search_bar": "#search-bar"
     },
-    "comments": {
-      "action": "hide",
-      "threshold": 0
+    "actions": {
+      "veterinarian_info": {
+        "threshold": 1,
+        "action": "scale"
+      },
+      "appointment_button": {
+        "threshold": 0,
+        "action": "hide"
+      },
+      "search_bar": {
+        "threshold": 0.3,
+        "action": "reduce"
+      }
     }
   }
 }
