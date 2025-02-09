@@ -1,31 +1,72 @@
-# WebHabit
+# Chrome Extension : Dynamic Site Customizer
 
-Une extension Chrome qui adapte l'interface des sites en fonction de vos habitudes de navigation.
+Cette extension Chrome vous permet de personnaliser le comportement et l'apparence des sites web en fonction de vos habitudes de navigation. Elle analyse votre interaction avec les éléments de la page (clics, visites, durée d'affichage) et ajuste dynamiquement l'affichage en fonction de vos préférences.
 
 ## Fonctionnalités
 
-- **Suivi des interactions** : L'extension suit vos actions sur les pages web pour apprendre de vos habitudes.
-- **Personnalisation automatique** : Après une période d'utilisation, l'extension ajuste dynamiquement l'affichage des sites en fonction de vos préférences.
-- **Ajustements spécifiques** : Par exemple, affichage de la barre latérale, masquage des commentaires, mise en avant de la recherche, etc.
+- **Sélection dynamique d'éléments** : Sélectionnez facilement des éléments de la page que vous souhaitez personnaliser.
+- **Actions configurables** : Cacher, réduire, redimensionner ou mettre en plein écran des éléments en fonction de vos habitudes.
+- **Prévisualisation des actions** : Appliquez temporairement les actions sur les éléments sélectionnés pour les tester avant de les enregistrer.
+- **Sauvegarde automatique dans `settings.json`** : Une fois que vous êtes satisfait d'une action, vous pouvez la sauvegarder et l'appliquer automatiquement à chaque visite du site.
+- **Paramétrage personnalisé** : Aucune configuration manuelle nécessaire. L'extension apprend automatiquement de votre navigation.
 
 ## Installation
 
-1. Téléchargez l'extension depuis le dépôt.
-2. Ouvrez `chrome://extensions/` dans votre navigateur.
-3. Activez le mode développeur.
-4. Cliquez sur "Charger l'extension non empaquetée" et sélectionnez le dossier de l'extension.
+1. Clonez ou téléchargez ce dépôt.
+2. Allez dans `chrome://extensions/` dans votre navigateur Chrome.
+3. Activez le mode développeur en haut à droite.
+4. Cliquez sur "Charger l'extension décompressée" et sélectionnez le dossier contenant l'extension.
+5. L'extension est maintenant prête à l'emploi.
 
 ## Utilisation
 
-Une fois installée, l'extension commencera à suivre vos interactions avec les sites. Après une période d'utilisation, les ajustements seront automatiquement appliqués.
+### Sélectionner un élément
 
-### Personnalisation
+1. Cliquez sur le bouton "Activer le mode de sélection" dans l'extension pour entrer en mode de sélection.
+2. Cliquez sur n'importe quel élément de la page pour le sélectionner. L'élément sera mis en surbrillance.
+3. Un menu contextuel apparaîtra pour vous permettre de choisir l'action que vous souhaitez appliquer à l'élément sélectionné.
+4. Appliquez une action et prévisualisez les changements.
+5. Si l'action vous convient, vous pouvez la sauvegarder pour une application future.
 
-Vous pouvez choisir de personnaliser certains aspects de l'extension dans les paramètres de l'extension, par exemple :
-- Activer ou désactiver certains ajustements.
-- Choisir la fréquence des modifications appliquées.
+### Actions disponibles
 
-## Avenir
+- **hide** : Cache l'élément.
+- **scale** : Agrandit l'élément.
+- **rotate** : Applique une rotation à l'élément.
+- **color** : Change la couleur de l'élément.
+- **fullscreen** : Met l'élément en plein écran (si applicable).
+- **opacity** : Rend l'élément partiellement transparent.
 
-Nous prévoyons d'ajouter davantage de fonctionnalités, telles que des options de personnalisation plus avancées et une interface plus intuitive.
+### Fichier `settings.json`
 
+Le fichier `settings.json` contient la configuration des actions à appliquer pour chaque site. Il est sauvegardé localement et peut être édité directement. Exemple de configuration :
+
+```json
+{
+  "youtube.com": {
+    "selectors": {
+      "sidebar": "#related",
+      "comments": "#comments",
+      "subscription_button": "#subscribe-button",
+      "video_player": "#movie_player"
+    },
+    "actions": {
+      "sidebar": {
+        "threshold": 0.8,
+        "action": "hide"
+      },
+      "comments": {
+        "threshold": 0,
+        "action": "hide"
+      },
+      "subscription_button": {
+        "threshold": 0.5,
+        "action": "reduce"
+      },
+      "video_player": {
+        "threshold": 1,
+        "action": "fullscreen"
+      }
+    }
+  }
+}
